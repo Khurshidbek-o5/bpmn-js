@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_1">
+
+  <bpmn:process id="ecommerce_process" name="Elektron Do'kon Jarayoni" isExecutable="true">
+
+    <bpmn:startEvent id="start" name="Mijoz kiradi">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:task id="browse_products" name="Mahsulotlarni ko‘rish">
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:exclusiveGateway id="check_add_to_cart" name="Savatga qo‘shdimi?">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+      <bpmn:outgoing>Flow_4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:task id="add_to_cart" name="Savatga qo‘shish">
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+      <bpmn:outgoing>Flow_5</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:exclusiveGateway id="checkout_question" name="Buyurtma qiladimi?">
+      <bpmn:incoming>Flow_5</bpmn:incoming>
+      <bpmn:outgoing>Flow_6</bpmn:outgoing>
+      <bpmn:outgoing>Flow_7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:task id="checkout" name="Buyurtma qilish">
+      <bpmn:incoming>Flow_6</bpmn:incoming>
+      <bpmn:outgoing>Flow_8</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="payment" name="To‘lov qilish">
+      <bpmn:incoming>Flow_8</bpmn:incoming>
+      <bpmn:outgoing>Flow_9</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="shipment" name="Mahsulotni yetkazish">
+      <bpmn:incoming>Flow_9</bpmn:incoming>
+      <bpmn:outgoing>Flow_10</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:endEvent id="end" name="Jarayon yakunlandi">
+      <bpmn:incoming>Flow_10</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <!-- FLOWS -->
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="start" targetRef="browse_products"/>
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="browse_products" targetRef="check_add_to_cart"/>
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="check_add_to_cart" targetRef="add_to_cart"/>
+    <bpmn:sequenceFlow id="Flow_4" sourceRef="check_add_to_cart" targetRef="browse_products" name="yo‘q"/>
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="add_to_cart" targetRef="checkout_question"/>
+    <bpmn:sequenceFlow id="Flow_6" sourceRef="checkout_question" targetRef="checkout"/>
+    <bpmn:sequenceFlow id="Flow_7" sourceRef="checkout_question" targetRef="browse_products" name="yo‘q"/>
+    <bpmn:sequenceFlow id="Flow_8" sourceRef="checkout" targetRef="payment"/>
+    <bpmn:sequenceFlow id="Flow_9" sourceRef="payment" targetRef="shipment"/>
+    <bpmn:sequenceFlow id="Flow_10" sourceRef="shipment" targetRef="end"/>
+
+  </bpmn:process>
+
+</bpmn:definitions>
