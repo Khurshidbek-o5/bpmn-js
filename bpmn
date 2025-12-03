@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Elektron Do'kon BPMN</title>
+
+  <!-- BPMN CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/bpmn-js/dist/assets/diagram-js.css">
+  <link rel="stylesheet" href="https://unpkg.com/bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css">
+
+  <style>
+    #canvas {
+      width: 100%;
+      height: 700px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+<h2 style="font-family:Arial; text-align:center;">Elektron Do'kon — BPMN Diagram</h2>
+<div id="canvas"></div>
+
+<!-- BPMN JS kutubxonasi -->
+<script src="https://unpkg.com/bpmn-js/dist/bpmn-modeler.development.js"></script>
+
+<script>
+const bpmnXML = `
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_2">
+
+  <bpmn:process id="ecommerce_full_process" name="Elektron Do‘kon Jarayoni" isExecutable="true">
+
+    <bpmn:startEvent id="start" name="Mijoz saytga kiradi">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:task id="search_products" name="Mahsulot qidirish">
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="filter_products" name="Filtrlash / Saralash">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="view_product" name="Mahsulotni ko‘rish">
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+      <bpmn:outgoing>Flow_4</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:exclusiveGateway id="decide_add_to_cart" name="Savatga qo‘shadimi?">
+      <bpmn:incoming>Flow_4</bpmn:incoming>
+      <bpmn:outgoing>Flow_5</bpmn:outgoing>
+      <bpmn:outgoing>Flow_6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:task id="add_to_cart" name="Savatga qo‘shish">
+      <bpmn:incoming>Flow_5</bpmn:incoming>
+      <bpmn:outgoing>Flow_7</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="view_cart" name="Savatni ko‘rish">
+      <bpmn:incoming>Flow_7</bpmn:incoming>
+      <bpmn:outgoing>Flow_8</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:exclusiveGateway id="need_login" name="Login qilganmi?">
+      <bpmn:incoming>Flow_8</bpmn:incoming>
+      <bpmn:outgoing>Flow_9</bpmn:outgoing>
+      <bpmn:outgoing>Flow_10</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:task id="customer_login" name="Login / Ro‘yxatdan o‘tish">
+      <bpmn:incoming>Flow_9</bpmn:incoming>
+      <bpmn:outgoing>Flow_11</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="apply_coupon" name="Promo kod qo‘llash">
+      <bpmn:incoming>Flow_11</bpmn:incoming>
+      <bpmn:outgoing>Flow_12</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="stock_check" name="Omborda bor-yo‘qligini tekshirish">
+      <bpmn:incoming>Flow_12</bpmn:incoming>
+      <bpmn:outgoing>Flow_13</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:exclusiveGateway id="stock_available" name="Mahsulot mavjudmi?">
+      <bpmn:incoming>Flow_13</bpmn:incoming>
+      <bpmn:outgoing>Flow_14</bpmn:outgoing>
+      <bpmn:outgoing>Flow_15</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:task id="checkout" name="Buyurtma qilish (Checkout)">
+      <bpmn:incoming>Flow_14</bpmn:incoming>
+      <bpmn:outgoing>Flow_16</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="payment" name="To‘lov qilish">
+      <bpmn:incoming>Flow_16</bpmn:incoming>
+      <bpmn:outgoing>Flow_17</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="package_prepare" name="Mahsulotni tayyorlash">
+      <bpmn:incoming>Flow_17</bpmn:incoming>
+      <bpmn:outgoing>Flow_18</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="handover_courier" name="Kuryerga topshirish">
+      <bpmn:incoming>Flow_18</bpmn:incoming>
+      <bpmn:outgoing>Flow_19</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="deliver" name="Yetkazib berish">
+      <bpmn:incoming>Flow_19</bpmn:incoming>
+      <bpmn:outgoing>Flow_20</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:task id="collect_feedback" name="Mijoz fikrini olish">
+      <bpmn:incoming>Flow_20</bpmn:incoming>
+      <bpmn:outgoing>Flow_21</bpmn:outgoing>
+    </bpmn:task>
+
+    <bpmn:endEvent id="end" name="Jarayon yakunlandi">
+      <bpmn:incoming>Flow_21</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <!-- FLOWS -->
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="start" targetRef="search_products"/>
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="search_products" targetRef="filter_products"/>
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="filter_products" targetRef="view_product"/>
+    <bpmn:sequenceFlow id="Flow_4" sourceRef="view_product" targetRef="decide_add_to_cart"/>
+
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="decide_add_to_cart" targetRef="add_to_cart"/>
+    <bpmn:sequenceFlow id="Flow_6" sourceRef="decide_add_to_cart" targetRef="search_products"/>
+
+    <bpmn:sequenceFlow id="Flow_7" sourceRef="add_to_cart" targetRef="view_cart"/>
+
+    <bpmn:sequenceFlow id="Flow_8" sourceRef="view_cart" targetRef="need_login"/>
+
+    <bpmn:sequenceFlow id="Flow_9" sourceRef="need_login" targetRef="customer_login"/>
+    <bpmn:sequenceFlow id="Flow_10" sourceRef="need_login" targetRef="apply_coupon"/>
+
+    <bpmn:sequenceFlow id="Flow_11" sourceRef="customer_login" targetRef="apply_coupon"/>
+
+    <bpmn:sequenceFlow id="Flow_12" sourceRef="apply_coupon" targetRef="stock_check"/>
+    <bpmn:sequenceFlow id="Flow_13" sourceRef="stock_check" targetRef="stock_available"/>
+
+    <bpmn:sequenceFlow id="Flow_14" sourceRef="stock_available" targetRef="checkout"/>
+    <bpmn:sequenceFlow id="Flow_15" sourceRef="stock_available" targetRef="search_products"/>
+
+    <bpmn:sequenceFlow id="Flow_16" sourceRef="checkout" targetRef="payment"/>
+    <bpmn:sequenceFlow id="Flow_17" sourceRef="payment" targetRef="package_prepare"/>
+    <bpmn:sequenceFlow id="Flow_18" sourceRef="package_prepare" targetRef="handover_courier"/>
+    <bpmn:sequenceFlow id="Flow_19" sourceRef="handover_courier" targetRef="deliver"/>
+    <bpmn:sequenceFlow id="Flow_20" sourceRef="deliver" targetRef="collect_feedback"/>
+    <bpmn:sequenceFlow id="Flow_21" sourceRef="collect_feedback" targetRef="end"/>
+
+  </bpmn:process>
+
+</bpmn:definitions>
+`;
+
+const modeler = new BpmnJS({
+  container: '#canvas'
+});
+
+modeler.importXML(bpmnXML);
+</script>
+
+</body>
+</html>
